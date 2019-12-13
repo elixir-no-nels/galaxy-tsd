@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Welcome to NeLS Galaxy</title>
+
+    <!-- --- -->
+    <link type="text/css" rel="stylesheet" href="css/theme.css"/>
+    <link type="text/css" rel="stylesheet" href="css/primefaces.css"/>
+    <link type="text/css" rel="stylesheet" href="css/default.css"/>
+    <link type="text/css" rel="stylesheet" href="css/layout.css"/>
+    <link type="text/css" rel="stylesheet" href="css/user.css"/>
+    <link type="text/css" rel="stylesheet" href="css/containers.css"/>
+    <link type="text/css" rel="stylesheet" href="css/controls.css"/>
+    <link type="text/css" rel="stylesheet" href="css/popup.css"/>
+    <link type="text/css" rel="stylesheet" href="css/welcome.css"/>
+
+    <style type="text/css">
+        text-decoration:none
+
+        ;
+        color:white
+
+        ;
+        }
+    </style>
+
+</head>
+
+<body>
+<script type="text/javascript">
+
+
+    var nodeNames = new Array("Oslo", "Bergen", "Trondheim", "Troms&oslash;", "NMBU", "Lifeportal"); // only "proper" nodes (not TSD or NeLS portal)
+    var universityNames = new Array("University of<br>Oslo", "University of<br>Bergen", "Norwegian&nbsp;University&nbsp;of<br>Science&nbsp;and&nbsp;Technology", "University of<br>Troms&oslash;", "Norwegian&nbsp;Univ.<br>of&nbsp;Life&nbsp;Sciences", "Lifeportal");
+    var nodePreposition = new Array("in", "in", "in", "in", "at", "at"); // the word used in place of @ in the welome text: "Welcome to the NeLS Galaxy installation @ [node]"
+
+
+    // Images for node logos (these should be placed in the 'NELS' subdirectory relative to this page)
+    var universityLogos = new Array(
+        "uio-logo.png",
+        "uib-logo.png",
+        "ntnu-logo.png",
+        "uit-logo.png",
+        "nmbu-logo.png",
+        "lifeportal-logo.png"
+    );
+
+    var boxwidths = new Array(160, 160, 242, 160, 180, 150); // the width of the link button for each node (Oslo,Bergen,Trondheim,Tromso,NMBU,Lifeportal)
+    var boxFontSize = new Array(13, 13, 13, 13, 12, 13);        // the font-size used for the text in each node button  (--''--)
+
+
+    function outputNodeLinkButton(nodeIndex) { // Output link-button for a particular node
+        buttonWidth = boxwidths[nodeIndex];
+        document.write("<table style=\"padding:0;margin:0;\">");
+        document.write("<tr style=\"padding:0;\">");
+        if (nodeIndex == 5) { // lifeportal
+            document.write("<td style=\"padding:0;margin:0;vertical-align:top\">");
+            document.write("<img src=\"images/" + universityLogos[nodeIndex] + "\" style=\"height:50px;width:144px;margin-top:3px;border:0;padding-right:8px;\">");
+            document.write("</td>");
+        } else {
+            document.write("<td style=\"padding:0;margin:0;vertical-align:top\">");
+            document.write("<img src=\"images/" + universityLogos[nodeIndex] + "\" style=\"height:50px;width:50px;margin-top:3px;border:0;padding-right:8px;\">");
+            document.write("</td>");
+            document.write("<td style=\"height:60px;padding:0;margin:0;vertical-align:top\">");
+            document.write("<H2 style=\"font-size:" + boxFontSize[nodeIndex] + "pt;margin-top:6px;\">" + universityNames[nodeIndex] + "</H2>");
+            document.write("</td>");
+        }
+        document.write("</tr>");
+        document.write("</table>");
+        document.write("</a>");
+    }
+
+
+    function outputSupportButton() {
+        document.write("<table style=\"padding:0;margin:0;\">");
+        document.write("<tr style=\"padding:0;\">");
+        document.write("<td style=\"padding:0;margin:0;vertical-align:top\">");
+        document.write("<img src=\"images/mail-icon1.gif\" style=\"height:32px;width:40px;margin-top:0px;border:0;padding-right:0px;\">");
+        document.write("</td>");
+        document.write("<td style=\"height:36px;padding:0;margin:0;vertical-align:top\">");
+        document.write("<H2 style=\"font-size:12pt;margin-top:6px;\">contact@bioinfo.no</H2>");
+        document.write("</td>");
+        document.write("</tr>");
+        document.write("</table>");
+        document.write("</a>");
+    }
+
+</script>
+
+<!-- beginning of page -->
+
+<div id="content-container" style="padding:20px;padding-bottom:0px;">
+    <div class="box-header">
+        <img src="images/NeLS-logo.png"
+             style="height:50px;margin-top:0px;border:0;padding-right:16px;vertical-align:middle;">
+        Welcome to the NeLS Galaxy for sensitive environments
+    </div> <!-- end header -->
+
+
+    <table style="border:0px;">
+        <tr style="border:0px;">
+            <td style="vertical-align:top;padding-right:70px;width:60%;min-width:300px;">
+
+                <!--   Introduction -->
+                <div class="box-body" style="border:0px;">
+                    <a href="https://wiki.galaxyproject.org" target="_blank">Galaxy</a> is a web-based platform for data
+                    intensive life science research that provides
+                    users with a unified, easy-to-use graphical interface to a host of different analysis tools.
+                    These tools can be run interactively, one by one, or combined into multi-step workflows that can be
+                    executed as a single analysis.
+                    <br><br>
+                    If this is your first time using Galaxy, you might want to have a look at http://blah-blah.com and
+                    additional documentation and tutorials on using Galaxy
+                    can be found at https://wiki.galaxyproject.org/Learn
+                    <br><br>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+
+    <br>
+    <br>
+
+    <!-- Tools and Workflows -->
+
+    <table style="border:0px;width:100%;padding:0px;margin:0px;">
+        <tr style="padding:0px;margin:0px;">
+            <td style="width:320px;border:0px;padding:0px;margin:0px;">
+                <div class="box-header">Tools and Workflows</div>
+            </td>
+            <td>
+                <div>
+                    <script type="text/javascript">
+                        outputSupportButton();
+                    </script>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="box-body">
+        ELIXIR.NO aims to develop tools and workflows for specific data analysis tasks, based on input from large user
+        groups
+        and help-desk users in Norway and also toward ELIXIR internationally.
+        To see a list of analysis workflows available on this Galaxy server, click the &ldquo;Shared Data&rdquo; menu at
+        the top of the page and select <a href="../workflows/list_published" class="smallbutton button3d"
+                                          id="published_workflows" target="_parent">Published Workflows</a>.
+        Visit the <a href="https://nels.bioinfo.no" target="_blank" class="smallbutton button3d">NeLS Portal</a> to
+        see the full list of <a href="https://galaxy-ntnu.bioinfo.no/www/nels_pipelines.html"
+                                class="smallbutton button3d">analysis pipelines</a>
+        available in all the NeLS Galaxies.
+    </div>
+
+    <br><br>
+    <br><br>
+
+
+    <!-- Other installations-->
+
+    <div class="box-header">
+        Other non-sensitve data NeLS Galaxy installations and resources
+    </div>
+
+    <div class="box-body">
+        The Galaxy installations at each of the participating universities have differing focus and may offer different
+        sets of tools and functionalities for non-sensitive data. Please see https://nels.bioinfo.no/<br>
+    </div>
+
+</div> <!-- end of: div id="content-container"-->
+
+<!-- end of page -->
+
+</body>
+</html>

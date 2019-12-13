@@ -1,0 +1,197 @@
+.button
+{
+	margin: 5px 10px 2px 0px;
+	border:none;
+	border-radius:3px;
+	text-decoration:none;
+	color: #29598E;
+	font-weight:bold;
+	padding:6px 6px 6px 23px;
+	font-family: Arial,Verdana,sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    cursor:pointer;
+    background-image:url(action.png) ;
+	background-color:#EFEFEF;
+	background-position:5px center;
+	background-repeat:no-repeat;
+	text-align:left;
+}
+
+.button:hover
+{
+	color:#fff;
+	background-color: #175D91;
+}
+
+.button-no-image
+{
+	padding:15px;
+	background-image:none;
+	background-color:#29598E;
+	color:#fff;
+}
+.button-no-image:hover{
+	background-color:#960014;
+}
+
+.no-bg-color
+{
+	background-color:transparent;
+}
+
+.button-pressed{
+	background-color:#960014;
+}
+
+
+.button-link,a.button-link, a.button-link:visited 
+{
+	background-color: transparent;
+    background-image: none;
+    border: medium none;
+    color: #960014;
+    padding: 0;
+    cursor:pointer;
+    font-size: 13px;
+    font-weight: normal;
+    text-decoration:none;
+    border-bottom:1px dotted transparent;
+}
+a.button-link, a.button-link:visited  /*compensate to the button/anchor behaviour difference*/
+{
+	padding-left:3px;
+}
+.button-link:hover,a.button-link:hover{
+	border-bottom:1px dotted #960014;
+}
+
+.button-link-image,a.button-link-image, a.button-link-image:visited 
+{
+	padding-left:20px;
+	background-repeat:no-repeat;
+	background-color: transparent;
+    border: medium none;
+    color: #960014;
+    padding: 0;
+    padding-left:20px;
+    cursor:pointer;
+    font-size: 13px;
+    font-weight: normal;
+    text-decoration:none;
+    border-bottom:1px dotted transparent;
+}
+
+.button-save{
+	background-image:url(/javax.faces.resource/images/save.png.xhtml) ;
+}
+
+
+
+.button-cancel{
+	background-image:url(/javax.faces.resource/images/cancel.png.xhtml) ;
+}
+
+.button-delete{
+	background-image:url(/javax.faces.resource/images/delete.png.xhtml) ;
+}
+
+.button-upload{
+	background-image:url(/javax.faces.resource/images/upload.png.xhtml) ;
+}
+
+.button-disabled, .button-disabled:hover{
+	background-color:#bbb;
+	cursor: default;
+}
+
+
+/*data grid things*/
+.ui-datatable .ui-selection-column .ui-chkbox-all {
+    float: left;
+}
+
+.tick-list li {
+    background-image: url(action.png);
+    background-position: 3px center;
+    background-repeat: no-repeat;
+    line-height: 2;
+    list-style-type: none;
+    padding-left: 25px;
+    padding-top: 0;
+    border-bottom: 1px dashed #777777;
+}
+
+.simple-list li {
+    background:none;
+    line-height: 2;
+    list-style-type: none;
+    margin-left:-30px;
+    padding:0px;
+    border-bottom: 1px dashed #777777;
+}
+
+.galaxy{
+	background-image:url(/javax.faces.resource/images/galaxy.png.xhtml) ;
+}
+.edit{
+	background-image:url(/javax.faces.resource/images/edit.png.xhtml) ;
+}
+.rename{
+	background-image:url(/javax.faces.resource/images/rename.png.xhtml) ;
+}
+.file{
+	background-image:url(/javax.faces.resource/images/file.png.xhtml) ;
+}
+.file-new{
+	background-image:url(/javax.faces.resource/images/file-new.png.xhtml) ;
+}
+.folder{
+	background-image:url(/javax.faces.resource/images/folder.png.xhtml) ;
+}
+.folder-new{
+	background-image:url(/javax.faces.resource/images/folder-new.png.xhtml) ;
+}
+
+.pdf{
+	background-image:url(/javax.faces.resource/images/pdf.png.xhtml) ;
+}
+
+.doc, .docx, .rtf{
+	background-image:url(/javax.faces.resource/images/word.png.xhtml) ;
+}
+
+.xsl, .xlsx{
+	background-image:url(/javax.faces.resource/images/excel.png.xhtml) ;
+}
+
+.txt{
+	background-image:url(/javax.faces.resource/images/text.png.xhtml) ;
+}
+
+
+#header-and-borderless table thead tr {
+    display: none;
+}
+
+/*#header-and-borderless table thead tbody {
+    border-style: none;
+}*/	
+
+#header-and-borderless .ui-datatable table, .ui-datatable-data {
+    border-style: none;
+}
+
+.nameField {
+    text-align: left;
+    padding: 5px 5px 5px 5px;
+    font-size: 14px;
+    width: 100px;
+    font-weight: bold;
+}
+
+.valueField {
+    text-align: left;
+    padding: 5px;
+    font-size: 14px;
+}

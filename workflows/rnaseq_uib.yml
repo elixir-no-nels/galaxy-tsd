@@ -1,0 +1,223 @@
+{
+    "a_galaxy_workflow": "true", 
+    "annotation": "", 
+    "format-version": "0.1", 
+    "name": "RNA-seq Star based alignment and count WF", 
+    "steps": {
+        "0": {
+            "annotation": "", 
+            "content_id": null, 
+            "errors": null, 
+            "id": 0, 
+            "input_connections": {}, 
+            "inputs": [
+                {
+                    "description": "", 
+                    "name": "Multiple samples fastq input Collection"
+                }
+            ], 
+            "label": null, 
+            "name": "Input dataset collection", 
+            "outputs": [], 
+            "position": {
+                "left": 182, 
+                "top": 394
+            }, 
+            "tool_id": null, 
+            "tool_state": "{\"collection_type\": \"list\", \"name\": \"Multiple samples fastq input Collection\"}", 
+            "tool_version": null, 
+            "type": "data_collection_input", 
+            "uuid": "d66f8661-6500-4ad1-a081-9e2cba671939", 
+            "workflow_outputs": []
+        }, 
+        "1": {
+            "annotation": "", 
+            "content_id": null, 
+            "errors": null, 
+            "id": 1, 
+            "input_connections": {}, 
+            "inputs": [
+                {
+                    "description": "", 
+                    "name": "Reference Gene annotation file"
+                }
+            ], 
+            "label": null, 
+            "name": "Input dataset", 
+            "outputs": [], 
+            "position": {
+                "left": 212, 
+                "top": 502
+            }, 
+            "tool_id": null, 
+            "tool_state": "{\"name\": \"Reference Gene annotation file\"}", 
+            "tool_version": null, 
+            "type": "data_input", 
+            "uuid": "373f0234-becf-4045-8b4f-f0b86ef12429", 
+            "workflow_outputs": []
+        }, 
+        "2": {
+            "annotation": "", 
+            "content_id": "galaxy-ntnu.bioinfo.no/toolshed_nels/repos/kjell/rgrnastar/rna_star/2.4.2a", 
+            "errors": null, 
+            "id": 2, 
+            "input_connections": {
+                "singlePaired|input1": {
+                    "id": 0, 
+                    "output_name": "output"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "RNA STAR", 
+            "outputs": [
+                {
+                    "name": "output_log", 
+                    "type": "txt"
+                }, 
+                {
+                    "name": "chimeric_junctions", 
+                    "type": "interval"
+                }, 
+                {
+                    "name": "chimeric_reads", 
+                    "type": "bam"
+                }, 
+                {
+                    "name": "splice_junctions", 
+                    "type": "interval"
+                }, 
+                {
+                    "name": "mapped_reads", 
+                    "type": "bam"
+                }
+            ], 
+            "position": {
+                "left": 481, 
+                "top": 235
+            }, 
+            "post_job_actions": {
+                "HideDatasetActionchimeric_junctions": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "chimeric_junctions"
+                }, 
+                "HideDatasetActionchimeric_reads": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "chimeric_reads"
+                }, 
+                "HideDatasetActionsplice_junctions": {
+                    "action_arguments": {}, 
+                    "action_type": "HideDatasetAction", 
+                    "output_name": "splice_junctions"
+                }, 
+                "RenameDatasetActionmapped_reads": {
+                    "action_arguments": {
+                        "newname": "input1"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "mapped_reads"
+                }, 
+                "RenameDatasetActionoutput_log": {
+                    "action_arguments": {
+                        "newname": "input1"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "output_log"
+                }
+            }, 
+            "tool_id": "galaxy-ntnu.bioinfo.no/toolshed_nels/repos/kjell/rgrnastar/rna_star/2.4.2a", 
+            "tool_shed_repository": {
+                "changeset_revision": "26232ed49de9", 
+                "name": "rgrnastar", 
+                "owner": "kjell", 
+                "tool_shed": "galaxy-ntnu.bioinfo.no/toolshed_nels"
+            }, 
+            "tool_state": "{\"__page__\": null, \"outSAMstrandField\": \"\\\"--outSAMstrandField intronMotif\\\"\", \"singlePaired\": \"{\\\"sPaired\\\": \\\"single\\\", \\\"input1\\\": null, \\\"__current_case__\\\": 0}\", \"outSAMattributes\": \"\\\"--outSAMattributes All\\\"\", \"jobName\": \"\\\"rna-star run\\\"\", \"params\": \"{\\\"settingsType\\\": \\\"preSet\\\", \\\"__current_case__\\\": 0}\", \"refGenomeSource\": \"{\\\"genomeSource\\\": \\\"indexed\\\", \\\"index\\\": \\\"lsal01_75\\\", \\\"__current_case__\\\": 0}\", \"__rerun_remap_job_id__\": null, \"outFilterIntronMotifs\": \"\\\"--outFilterIntronMotifs RemoveNoncanonical\\\"\"}", 
+            "tool_version": "2.4.2a", 
+            "type": "tool", 
+            "uuid": "d7f3863e-f1a3-4916-84f7-433992fa1ae0", 
+            "workflow_outputs": [
+                {
+                    "label": null, 
+                    "output_name": "output_log", 
+                    "uuid": null
+                }, 
+                {
+                    "label": null, 
+                    "output_name": "mapped_reads", 
+                    "uuid": null
+                }
+            ]
+        }, 
+        "3": {
+            "annotation": "", 
+            "content_id": "galaxy-ntnu.bioinfo.no/toolshed_nels/repos/kjetil/featurecounts/featurecounts/1.0.2", 
+            "errors": null, 
+            "id": 3, 
+            "input_connections": {
+                "alignments": {
+                    "id": 2, 
+                    "output_name": "mapped_reads"
+                }, 
+                "reference_gene_sets_source|reference_gene_sets": {
+                    "id": 1, 
+                    "output_name": "output"
+                }
+            }, 
+            "inputs": [], 
+            "label": null, 
+            "name": "featureCounts", 
+            "outputs": [
+                {
+                    "name": "output", 
+                    "type": "tabular"
+                }, 
+                {
+                    "name": "output_summary", 
+                    "type": "text"
+                }, 
+                {
+                    "name": "output_reports", 
+                    "type": "tabular"
+                }
+            ], 
+            "position": {
+                "left": 783, 
+                "top": 469
+            }, 
+            "post_job_actions": {}, 
+            "tool_id": "galaxy-ntnu.bioinfo.no/toolshed_nels/repos/kjetil/featurecounts/featurecounts/1.0.2", 
+            "tool_shed_repository": {
+                "changeset_revision": "fa9da85f64a7", 
+                "name": "featurecounts", 
+                "owner": "kjetil", 
+                "tool_shed": "galaxy-ntnu.bioinfo.no/toolshed_nels"
+            }, 
+            "tool_state": "{\"__page__\": null, \"reference_gene_sets_source\": \"{\\\"reference_gene_sets\\\": null, \\\"__current_case__\\\": 1, \\\"source_select\\\": \\\"history\\\"}\", \"format\": \"\\\"tabdel_short\\\"\", \"__rerun_remap_job_id__\": null, \"threads\": \"\\\"1\\\"\", \"alignments\": \"null\", \"extended_parameters\": \"{\\\"gff_feature_attribute\\\": \\\"Parent\\\", \\\"only_both_ends\\\": \\\"false\\\", \\\"protocol\\\": \\\" -s 1\\\", \\\"parameters\\\": \\\"extended\\\", \\\"mapping_quality\\\": \\\"0\\\", \\\"minimum_fragment_length\\\": \\\"50\\\", \\\"namesort\\\": \\\"false\\\", \\\"fragment_counting\\\": \\\"false\\\", \\\"__current_case__\\\": 1, \\\"contribute_to_multiple_features\\\": \\\"false\\\", \\\"check_distance\\\": \\\"false\\\", \\\"summarization_level\\\": \\\"false\\\", \\\"exclude_chimerics\\\": \\\"false\\\", \\\"maximum_fragment_length\\\": \\\"600\\\", \\\"multimapping_counts\\\": \\\"false\\\", \\\"gff_feature_type\\\": \\\"exon\\\"}\", \"output_read_assignments\": \"\\\"false\\\"\"}", 
+            "tool_version": "1.0.2", 
+            "type": "tool", 
+            "uuid": "22ccfa8b-b35b-4d83-bb5d-265840d62853", 
+            "workflow_outputs": [
+                {
+                    "label": null, 
+                    "output_name": "output_summary", 
+                    "uuid": null
+                }, 
+                {
+                    "label": null, 
+                    "output_name": "output_reports", 
+                    "uuid": null
+                }, 
+                {
+                    "label": null, 
+                    "output_name": "output", 
+                    "uuid": null
+                }
+            ]
+        }
+    }, 
+    "tags": [], 
+    "uuid": "015a4778-a7c7-4de2-8636-b7be15dbf755"
+}
