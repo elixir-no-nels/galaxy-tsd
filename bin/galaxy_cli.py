@@ -2,6 +2,8 @@
 
 import argparse
 import sys
+import os
+import json
 import subprocess
 
 
@@ -73,7 +75,7 @@ def valid_command(command:int, commands:int, msg:str=None):
         print("Invalid command name: '{}', allowed commands are {}".format( command, ", ".join(commands)))
         sys.exit()
 
-def container_run():
+def container_run(config:{}):
     cmd = "docker run -dp 8080:80 test"
     launch_cmd( cmd )
 
@@ -81,13 +83,22 @@ def container_stop(container_id):
     cmd = "docker stop {}".format( container_id )
     launch_cmd( cmd )
 
-
-
 def container_logs(container_id):
     cmd = "docker logs  {}".format( container_id)
     stdout, stderr = launch_cmd( cmd )
     stdout = stdout.decode("utf-8")
     print( stdout )
+
+
+def container_list(name:str) -> None:
+    cmd = "docker ps".format( name)
+    stdout, stderr = launch_cmd( cmd )
+    lines = stdout.decode("utf-8").split("\n")
+    lines = list( filter(lambda x: x.startswith("CONT") or name in x, lines))
+    print( "\n".join( lines ))
+
+#    print( stdout.decode("utf-8") )
+
 
 
 def get_container_id(name:str) -> str:
@@ -107,22 +118,32 @@ def get_container_id(name:str) -> str:
     fields = lines[0].split(r' ')
     return fields[0]
 
+def readin_json_file(filename:str) -> {}:
+
+    if not os.path.isfile( filename ) or os.path.getsize(filename) == 0:
+        return {}
+
+    with open( filename ) as json_file:
+        data = json.load(json_file)
+        json_file.close(  )
+
+    return data
 
 
 def main():
 
-    commands = ['start', 'stop','logs', 'help']
+    commands = ['start', 'stop','logs', 'list', 'help']
 
 
     parser = argparse.ArgumentParser(description='bysykkel_import: importing data')
 
 
-    parser.add_argument('-c', '--config', default="api.json", help="config file, can be overridden by parameters")
+    parser.add_argument('-c', '--config', default="galaxy.json", help="config file, can be overridden by parameters")
     parser.add_argument('command', nargs='+', help="{}".format(",".join(commands)))
 
     args = parser.parse_args()
 
-#    config = config_utils.readin_config_file( args.config )
+    config = readin_json_file( args.config )
 
 
     min_count(1, len(args.command), msg="galaxy_cli takes one of the following commands: {}".format(comma_sep( commands )))
@@ -131,15 +152,21 @@ def main():
     if command not in commands:
         parser.print_help()
 
-
-
     if command == 'start':
-        container_run()
+        container_run(config)
         sys.exit()
+    elif command == 'list':
+        container_list('test')
+        sys.exit()
+    elif command == 'help':
+        print("The tool support the following commands: {}".format(comma_sep( commands )))
+        sys.exit( 1 )
 
-    container_id = get_container_id(name='test')
-    if container_id:
-        args.command.append( container_id )
+
+    if len(args.command) == 0:
+        container_id = get_container_id(name='test')
+        if container_id:
+            args.command.append( container_id )
 
 
     if command == 'stop':
@@ -148,9 +175,6 @@ def main():
     elif command == 'logs':
         count(1, len(args.command), msg="logs require a container-d")
         container_logs(args.command.pop(0))
-    else:
-        print("The tool support the following commands: {}".format(comma_sep( commands )))
-        sys.exit( 1 )
 
 
 if __name__ == "__main__":
