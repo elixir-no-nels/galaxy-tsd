@@ -10,9 +10,11 @@ def launch_cmd(cmd: str, cwd: str = "") -> None:
     if cwd == '':
         p = subprocess.Popen(effective_command, stdout=subprocess.PIPE, shell=True, stderr=subprocess.PIPE,
                          bufsize=1)
-    else: subprocess.Popen(effective_command, stdout=subprocess.PIPE, shell=True, stderr=subprocess.PIPE, bufsize=1,
+    else:
+        p = subprocess.Popen(effective_command, stdout=subprocess.PIPE, shell=True, stderr=subprocess.PIPE, bufsize=1,
                                                                        cwd=cwd)
     stdout, stderr = p.communicate()
+
     return stdout, stderr
 
 def comma_sep(elements:[]) -> str:
@@ -75,15 +77,41 @@ def container_run():
     cmd = "docker run -dp 8080:80 test"
     launch_cmd( cmd )
 
+def container_stop(container_id):
+    cmd = "docker stop {}".format( container_id )
+    launch_cmd( cmd )
+
+
 
 def container_logs(container_id):
-    cmd = "docker logs -f {}".format( container_id)
+    cmd = "docker logs  {}".format( container_id)
+    stdout, stderr = launch_cmd( cmd )
+    stdout = stdout.decode("utf-8")
+    print( stdout )
+
+
+def get_container_id(name:str) -> str:
+    cmd = "docker ps | egrep {}".format( name)
+    stdout, stderr = launch_cmd( cmd )
+    lines = stdout.decode("utf-8").split("\n")
+    lines = list(filter(None, lines))
+
+    if lines == []:
+        print("No container named {} is running".format( name))
+        sys.exit()
+
+    if len(lines) > 1:
+        print( "Multiple containers running, please provide id")
+        return None
+
+    fields = lines[0].split(r' ')
+    return fields[0]
 
 
 
 def main():
 
-    commands = ['run', 'logs', 'help']
+    commands = ['start', 'stop','logs', 'help']
 
 
     parser = argparse.ArgumentParser(description='bysykkel_import: importing data')
@@ -103,12 +131,23 @@ def main():
     if command not in commands:
         parser.print_help()
 
-    if command == 'run':
+
+
+    if command == 'start':
         container_run()
+        sys.exit()
+
+    container_id = get_container_id(name='test')
+    if container_id:
+        args.command.append( container_id )
+
+
+    if command == 'stop':
+        count(1, len(args.command), msg="stop require a container-d")
+        container_stop(args.command.pop(0))
     elif command == 'logs':
         count(1, len(args.command), msg="logs require a container-d")
-        print( container_logs(args.command.pop(0)) )
-
+        container_logs(args.command.pop(0))
     else:
         print("The tool support the following commands: {}".format(comma_sep( commands )))
         sys.exit( 1 )
