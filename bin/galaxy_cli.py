@@ -75,9 +75,23 @@ def valid_command(command:int, commands:int, msg:str=None):
         print("Invalid command name: '{}', allowed commands are {}".format( command, ", ".join(commands)))
         sys.exit()
 
-def container_run(config:{}):
-    cmd = "docker run -dp 8080:80 test"
-    launch_cmd( cmd )
+def container_start(config:{}):
+
+    if 'port' not in config:
+        config[ 'port'] = 8080
+
+    extra = ""
+    if "storage" in config:
+        if not config['storage'].startswith("/"):
+            config['storage'] = os.path.abspath(config['storage'])
+
+        extra += " -v {}:/export/".format( config[ 'storage'])
+
+    cmd = "docker run {extra} -d -p{port}:80 test"
+    cmd = cmd.format( extra=extra, port=config['port'])
+
+    print( cmd )
+#    launch_cmd( cmd )
 
 def container_stop(container_id):
     cmd = "docker stop {}".format( container_id )
@@ -118,6 +132,14 @@ def get_container_id(name:str) -> str:
     fields = lines[0].split(r' ')
     return fields[0]
 
+def container_bootstrap():
+    fh = open('galaxy.json', 'w')
+    fh.write( '{ "storage":"galaxy_data" }')
+    fh.close()
+    os.mkdir('galaxy_data')
+
+    sys.exit()
+
 def readin_json_file(filename:str) -> {}:
 
     if not os.path.isfile( filename ) or os.path.getsize(filename) == 0:
@@ -132,7 +154,7 @@ def readin_json_file(filename:str) -> {}:
 
 def main():
 
-    commands = ['start', 'stop','logs', 'list', 'help']
+    commands = ['start', 'stop','logs', 'list', 'bootstrap', 'help']
 
 
     parser = argparse.ArgumentParser(description='bysykkel_import: importing data')
@@ -153,10 +175,13 @@ def main():
         parser.print_help()
 
     if command == 'start':
-        container_run(config)
+        container_start(config)
         sys.exit()
     elif command == 'list':
         container_list('test')
+        sys.exit()
+    elif command == 'bootstrap':
+        container_bootstrap()
         sys.exit()
     elif command == 'help':
         print("The tool support the following commands: {}".format(comma_sep( commands )))
