@@ -16,13 +16,24 @@ WORKDIR /galaxy-central
 
 RUN add-tool-shed --url 'http://testtoolshed.g2.bx.psu.edu/' --name 'Test Tool Shed'
 
-ADD tools/rnaseq.yml $GALAXY_ROOT/rnaseq.yaml
+ADD ./tools/rnaseq.yml $GALAXY_ROOT/rnaseq.yaml
 
 RUN install-tools $GALAXY_ROOT/rnaseq.yaml && \
-    #/tool_deps/_conda/bin/conda clean --tarballs --yes > /dev/null && \
-    rm /export/galaxy-central/ -rf
+    /tool_deps/_conda/bin/conda clean --tarballs --yes > /dev/null && \
+    rm /export/galaxy-central/ -rf && \
+    mkdir -p workflows
 
-#ADD ./workflows/* $GALAXY_HOME/workflows/
+ADD ./nels-workflows/* $GALAXY_HOME/workflows/
+
+ENV GALAXY_CONFIG_TOOL_PATH=/galaxy-central/tools/
+
+
+#RUN /tool_deps/_conda/bin/workflow-install --workflow_path $GALAXY_HOME/workflows/ -g http://localhost:8080 \
+#        -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+
+# Download training data and populate the data library
+RUN startup_lite && \
+    /tool_deps/_conda/bin/workflow-install --workflow_path $GALAXY_HOME/workflows/ -g http://localhost:8080 -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
 
 # Install Visualisation
 #RUN install-biojs msa
@@ -37,12 +48,14 @@ RUN install-tools $GALAXY_ROOT/rnaseq.yaml && \
 VOLUME ["/export/", "/data/", "/var/lib/docker"]
 
 ADD assets $GALAXY_CONFIG_DIR/web/
-#ADD welcome.html $GALAXY_CONFIG_DIR/web/welcome.html
+
+#RUN mkdir $GALAXY_HOME/workflows/
+#ADD ./workflows/* $GALAXY_HOME/workflows/
 
 # Expose port 80 (webserver), 21 (FTP server), 8800 (Proxy)
 EXPOSE :80
 EXPOSE :21
-EXPOSE :8800
+#EXPOSE :8800
 
 # Autostart script that is invoked during container start
 CMD ["/usr/bin/startup"]

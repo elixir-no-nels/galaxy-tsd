@@ -2,7 +2,7 @@
     "a_galaxy_workflow": "true", 
     "annotation": "", 
     "format-version": "0.1", 
-    "name": "RNA-seq Star based alignment and count WF", 
+    "name": "RNA-seq Star based alignment and count WF",
     "steps": {
         "0": {
             "annotation": "", 

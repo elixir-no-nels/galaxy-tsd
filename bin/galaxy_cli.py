@@ -89,7 +89,7 @@ def wait_for_started(container_id):
 #        print( log )
         print(".", flush=True, end='')
         if (re.search("Galaxy server instance 'handler0' is running", log)):
-            print( "Galaxy container is up and running")
+            print( "\nGalaxy container is up and running")
             return
 
         time.sleep( 5 )
@@ -209,6 +209,7 @@ def main():
         sys.exit()
     elif command == 'build':
         cmd = "docker build -t {name} .".format(name=CONTAINER_NAME)
+        print( cmd )
         stdout = launch_cmd(cmd)
         print( stdout )
         sys.exit()
