@@ -23,17 +23,8 @@ def launch_cmd(cmd:str, cwd:str=None) -> None:
 def comma_sep(elements:[]) -> str:
     return ", ".join( map(str, elements))
 
-def basic_parser():
-    parser = argparse.ArgumentParser(description='cli for user management')
-    parser.add_argument('-c', '--config', default="api.json", help="config file, can be overridden by parameters")
-    parser.add_argument('-d', '--database', default=None)
-    subparsers = parser.add_subparsers(dest='subparser')
 
-
-    return parser.parse_args()
-
-
-def count(required:int, count:int, name:str=None, msg:str=None):
+def args_count(required:int, count:int, name:str=None, msg:str=None):
     if ( required != count):
         if msg is None:
             msg = "command requires {required} argument(s)".format( required=required)
@@ -44,7 +35,7 @@ def count(required:int, count:int, name:str=None, msg:str=None):
         sys.exit()
 
 
-def min_count(required:int, count:int, name:str=None, msg:str=None):
+def args_min_count(required:int, count:int, name:str=None, msg:str=None):
     if ( required > count):
         if msg is None:
             msg = "command requires {required} or more argument(s)".format( required=required )
@@ -187,9 +178,7 @@ def main():
 
     config = readin_json_file( args.config )
 
-
-
-    min_count(1, len(args.command), msg="galaxy_cli takes one of the following commands: {}".format(comma_sep( commands )))
+    args_min_count(1, len(args.command), msg="galaxy_cli takes one of the following commands: {}".format(comma_sep(commands)))
 
     command = args.command.pop(0)
     if command not in commands:
@@ -226,10 +215,10 @@ def main():
 
 
     if command == 'stop':
-        count(1, len(args.command), msg="stop require a container-d")
+        args_count(1, len(args.command), msg="stop require a container-d")
         container_stop(args.command.pop(0))
     elif command == 'logs':
-        count(1, len(args.command), msg="logs require a container-d")
+        args_count(1, len(args.command), msg="logs require a container-d")
         container_logs(args.command.pop(0))
 
 
