@@ -136,7 +136,7 @@ def get_container_id(name:str) -> str:
 
 def container_bootstrap():
     fh = open('galaxy.json', 'w')
-    fh.write( '{ "storage":"galaxy_data" }')
+    fh.write( '{ "storage":"galaxy_data", "port":8080 }')
     fh.close()
     os.mkdir('galaxy_data')
 
@@ -169,7 +169,7 @@ def main():
 
     commands = ['start', 'stop','logs', 'list', 'bootstrap', 'export', 'import', 'help']
 
-    parser = argparse.ArgumentParser(description='bysykkel_import: importing data')
+    parser = argparse.ArgumentParser(description="{}: handle docker function".format( CONTAINER_NAME ))
 
     parser.add_argument('-c', '--config', default="galaxy.json", help="config file, can be overridden by parameters")
     parser.add_argument('command', nargs='+', help="{}".format(",".join(commands)))
@@ -202,7 +202,10 @@ def main():
         sys.exit()
     elif command == 'import':
         cmd = "docker load < {name}.tar.gz".format(name=CONTAINER_NAME)
-        launch_cmd(cmd)
+        print( cmd )
+        stdout, stderr = launch_cmd(cmd)
+        print( stdout )
+        sys.exit()
     elif command == 'help':
         print("The tool support the following commands: {}".format(comma_sep( commands )))
         sys.exit( 1 )
