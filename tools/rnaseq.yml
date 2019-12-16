@@ -42,6 +42,17 @@ install_resolver_dependencies: true
 install_tool_dependencies: false
 tools:
 
+
+  - name: fastqc
+    owner: devteam
+    tool_panel_section_label: 'NGS'
+
+  - name: compalignp
+    owner: rnateam
+    tool_panel_section_label: 'RNA Alignment'
+
+non-tools:
+
   # RNA Alignment
 
   - name: compalignp
