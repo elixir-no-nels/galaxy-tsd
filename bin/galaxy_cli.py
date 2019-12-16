@@ -17,8 +17,12 @@ def launch_cmd(cmd:str, cwd:str=None) -> None:
     p = subprocess.Popen(effective_command, stdout=subprocess.PIPE, shell=True, stderr=subprocess.PIPE, bufsize=1,
                                                                        cwd=cwd)
     stdout, stderr = p.communicate()
+    if stderr:
+        print( stderr.decode('utf-8') )
+        sys.exit()
 
-    return stdout.decode('utf-8'), stderr.decode('utf-8')
+
+    return stdout.decode('utf-8')
 
 def comma_sep(elements:[]) -> str:
     return ", ".join( map(str, elements))
@@ -70,11 +74,8 @@ def container_start(config:{}):
     cmd = cmd.format( extra=extra, port=config['port'], name=CONTAINER_NAME)
 
 #    print( cmd )
-    stdout, stderr = launch_cmd( cmd )
+    stdout = launch_cmd( cmd )
 
-    if stderr:
-        print( stderr)
-        sys.exit()
 
     wait_for_started( stdout )
     hostname = socket.getfqdn()
@@ -96,7 +97,7 @@ def wait_for_started(container_id):
 
 def get_log(container_id:str):
     cmd = "docker logs  {}".format( container_id)
-    stdout, stderr = launch_cmd( cmd )
+    stdout = launch_cmd( cmd )
     return stdout
 
 
@@ -111,7 +112,7 @@ def container_logs(container_id):
 
 def container_list(name:str) -> None:
     cmd = "docker ps".format( name)
-    stdout, stderr = launch_cmd( cmd )
+    stdout = launch_cmd( cmd )
     lines = stdout.split("\n")
     lines = list( filter(lambda x: x.startswith("CONT") or name in x, lines))
     print( "\n".join( lines ))
@@ -119,7 +120,7 @@ def container_list(name:str) -> None:
 
 def get_container_id(name:str) -> str:
     cmd = "docker ps | egrep {}".format( name)
-    stdout, stderr = launch_cmd( cmd )
+    stdout = launch_cmd( cmd )
     lines = stdout.split("\n")
     lines = list(filter(None, lines))
 
@@ -201,9 +202,9 @@ def main():
         launch_cmd(cmd)
         sys.exit()
     elif command == 'import':
-        cmd = "docker load < {name}.tar.gz".format(name=CONTAINER_NAME)
-        print( cmd )
-        stdout, stderr = launch_cmd(cmd)
+        cmd = "docker load < {name}.tgz".format(name=CONTAINER_NAME)
+#        print( cmd )
+        stdout = launch_cmd(cmd)
         print( stdout )
         sys.exit()
     elif command == 'help':
