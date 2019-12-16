@@ -2,9 +2,14 @@
 
 import argparse
 import sys
+import re
+import time
 import os
 import json
 import subprocess
+
+
+CONTAINER_NAME = "test"
 
 
 def launch_cmd(cmd: str, cwd: str = "") -> None:
@@ -69,7 +74,6 @@ def min_count_subcommand(required:int, count:int, name:str=None, msg:str=None):
 
     return min_count(required=required, count=count, name=name, msg=msg)
 
-
 def valid_command(command:int, commands:int, msg:str=None):
     if command not in commands:
         print("Invalid command name: '{}', allowed commands are {}".format( command, ", ".join(commands)))
@@ -87,21 +91,43 @@ def container_start(config:{}):
 
         extra += " -v {}:/export/".format( config[ 'storage'])
 
-    cmd = "docker run {extra} -d -p{port}:80 test"
+    cmd = "docker run {extra} -d -p{port}:80 {}".format( CONTAINER_NAME )
     cmd = cmd.format( extra=extra, port=config['port'])
 
-    print( cmd )
-#    launch_cmd( cmd )
+#    print( cmd )
+    stdout, stderr = launch_cmd( cmd )
+    stdout = stdout.decode('utf-8')
+    if stderr:
+        print( stderr.decode('utf-8'))
+        sys.exit()
+
+    wait_for_started( stdout )
+
+def wait_for_started(container_id):
+ #   print( "CID", container_id)
+    starting = True
+    while( starting ):
+        log = get_log( container_id )
+        print( log )
+        if (re.search("Galaxy server instance 'handler0' is running", log)):
+            print( "Galaxy container is up and running")
+            return
+
+        time.sleep( 10 )
+
+def get_log(container_id:str):
+    cmd = "docker logs  {}".format( container_id)
+    stdout, stderr = launch_cmd( cmd )
+    stdout = stdout.decode("utf-8")
+    return stdout
+
 
 def container_stop(container_id):
     cmd = "docker stop {}".format( container_id )
     launch_cmd( cmd )
 
 def container_logs(container_id):
-    cmd = "docker logs  {}".format( container_id)
-    stdout, stderr = launch_cmd( cmd )
-    stdout = stdout.decode("utf-8")
-    print( stdout )
+    print( get_log(container_id))
 
 
 def container_list(name:str) -> None:
@@ -178,7 +204,7 @@ def main():
         container_start(config)
         sys.exit()
     elif command == 'list':
-        container_list('test')
+        container_list(CONTAINER_NAME)
         sys.exit()
     elif command == 'bootstrap':
         container_bootstrap()
@@ -189,7 +215,7 @@ def main():
 
 
     if len(args.command) == 0:
-        container_id = get_container_id(name='test')
+        container_id = get_container_id(name=CONTAINER_NAME)
         if container_id:
             args.command.append( container_id )
 
