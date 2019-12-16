@@ -70,7 +70,7 @@ def container_start(config:{}):
 
         extra += " -v {}:/export/".format( config[ 'storage'])
 
-    cmd = "docker run -rm {extra} -d -p{port}:80 {name}"
+    cmd = "docker run --rm {extra} -d -p{port}:80 {name}"
     cmd = cmd.format( extra=extra, port=config['port'], name=CONTAINER_NAME)
 
 #    print( cmd )
@@ -168,7 +168,7 @@ def get_ip():
 
 def main():
 
-    commands = ['start', 'stop','logs', 'list', 'bootstrap', 'export', 'import', 'help']
+    commands = ['start', 'stop','logs', 'list', 'bootstrap', 'build', 'export', 'import', 'help']
 
     parser = argparse.ArgumentParser(description="{}: handle docker function".format( CONTAINER_NAME ))
 
@@ -204,6 +204,11 @@ def main():
     elif command == 'import':
         cmd = "docker load < {name}.tgz".format(name=CONTAINER_NAME)
 #        print( cmd )
+        stdout = launch_cmd(cmd)
+        print( stdout )
+        sys.exit()
+    elif command == 'build':
+        cmd = "docker build -t {name} .".format(name=CONTAINER_NAME)
         stdout = launch_cmd(cmd)
         print( stdout )
         sys.exit()
