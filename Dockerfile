@@ -16,13 +16,13 @@ WORKDIR /galaxy-central
 
 RUN add-tool-shed --url 'http://testtoolshed.g2.bx.psu.edu/' --name 'Test Tool Shed'
 
-#ADD tools/rnaseq.yml $GALAXY_ROOT/rnaseq.yaml
+ADD tools/rnaseq.yml $GALAXY_ROOT/rnaseq.yaml
 
-#RUN install-tools $GALAXY_ROOT/rnaseq.yaml && \
-#    /tool_deps/_conda/bin/conda clean --tarballs --yes > /dev/null && \
-#    rm /export/galaxy-central/ -rf
+RUN install-tools $GALAXY_ROOT/rnaseq.yaml && \
+    #/tool_deps/_conda/bin/conda clean --tarballs --yes > /dev/null && \
+    rm /export/galaxy-central/ -rf
 
-ADD ./workflows/* $GALAXY_HOME/workflows/
+#ADD ./workflows/* $GALAXY_HOME/workflows/
 
 # Install Visualisation
 #RUN install-biojs msa
@@ -37,7 +37,7 @@ ADD ./workflows/* $GALAXY_HOME/workflows/
 VOLUME ["/export/", "/data/", "/var/lib/docker"]
 
 ADD assets $GALAXY_CONFIG_DIR/web/
-ADD welcome.html $GALAXY_CONFIG_DIR/web/welcome.html
+#ADD welcome.html $GALAXY_CONFIG_DIR/web/welcome.html
 
 # Expose port 80 (webserver), 21 (FTP server), 8800 (Proxy)
 EXPOSE :80
