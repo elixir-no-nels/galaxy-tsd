@@ -7,22 +7,18 @@ import time
 import os
 import json
 import subprocess
-
+import socket
 
 CONTAINER_NAME = "test"
 
 
-def launch_cmd(cmd: str, cwd: str = "") -> None:
+def launch_cmd(cmd:str, cwd:str=None) -> None:
     effective_command = cmd
-    if cwd == '':
-        p = subprocess.Popen(effective_command, stdout=subprocess.PIPE, shell=True, stderr=subprocess.PIPE,
-                         bufsize=1)
-    else:
-        p = subprocess.Popen(effective_command, stdout=subprocess.PIPE, shell=True, stderr=subprocess.PIPE, bufsize=1,
+    p = subprocess.Popen(effective_command, stdout=subprocess.PIPE, shell=True, stderr=subprocess.PIPE, bufsize=1,
                                                                        cwd=cwd)
     stdout, stderr = p.communicate()
 
-    return stdout, stderr
+    return stdout.decode('utf-8'), stderr.decode('utf-8')
 
 def comma_sep(elements:[]) -> str:
     return ", ".join( map(str, elements))
@@ -47,6 +43,7 @@ def count(required:int, count:int, name:str=None, msg:str=None):
         print(msg)
         sys.exit()
 
+
 def min_count(required:int, count:int, name:str=None, msg:str=None):
     if ( required > count):
         if msg is None:
@@ -57,27 +54,14 @@ def min_count(required:int, count:int, name:str=None, msg:str=None):
         print(msg)
         sys.exit()
 
-def count_subcommand(required:int, count:int, name:str=None, msg:str=None):
 
-    msg = "command requires a subcommand (run with help)"
 
-    if name is not None:
-        msg = "{} {}".format( name, msg)
-
-    return count(required=required, count=count, name=name, msg=msg)
-
-def min_count_subcommand(required:int, count:int, name:str=None, msg:str=None):
-    msg = "command requires a subcommand (run with help)"
-
-    if name is not None:
-        msg = "{} {}".format( name, msg)
-
-    return min_count(required=required, count=count, name=name, msg=msg)
 
 def valid_command(command:int, commands:int, msg:str=None):
     if command not in commands:
         print("Invalid command name: '{}', allowed commands are {}".format( command, ", ".join(commands)))
         sys.exit()
+
 
 def container_start(config:{}):
 
@@ -91,40 +75,44 @@ def container_start(config:{}):
 
         extra += " -v {}:/export/".format( config[ 'storage'])
 
-    cmd = "docker run {extra} -d -p{port}:80 {}".format( CONTAINER_NAME )
-    cmd = cmd.format( extra=extra, port=config['port'])
+    cmd = "docker run -rm {extra} -d -p{port}:80 {name}"
+    cmd = cmd.format( extra=extra, port=config['port'], name=CONTAINER_NAME)
 
 #    print( cmd )
     stdout, stderr = launch_cmd( cmd )
-    stdout = stdout.decode('utf-8')
+
     if stderr:
-        print( stderr.decode('utf-8'))
+        print( stderr)
         sys.exit()
 
     wait_for_started( stdout )
+    hostname = socket.getfqdn()
+    print("Connect to the instance at: http://{name}:{port} or http://{ip}:{port}".format(name=hostname, port=config['port'], ip=get_ip()))
 
 def wait_for_started(container_id):
  #   print( "CID", container_id)
     starting = True
     while( starting ):
         log = get_log( container_id )
-        print( log )
+#        print( log )
+        print(".", flush=True, end='')
         if (re.search("Galaxy server instance 'handler0' is running", log)):
             print( "Galaxy container is up and running")
             return
 
-        time.sleep( 10 )
+        time.sleep( 5 )
+
 
 def get_log(container_id:str):
     cmd = "docker logs  {}".format( container_id)
     stdout, stderr = launch_cmd( cmd )
-    stdout = stdout.decode("utf-8")
     return stdout
 
 
 def container_stop(container_id):
     cmd = "docker stop {}".format( container_id )
     launch_cmd( cmd )
+
 
 def container_logs(container_id):
     print( get_log(container_id))
@@ -133,18 +121,15 @@ def container_logs(container_id):
 def container_list(name:str) -> None:
     cmd = "docker ps".format( name)
     stdout, stderr = launch_cmd( cmd )
-    lines = stdout.decode("utf-8").split("\n")
+    lines = stdout.split("\n")
     lines = list( filter(lambda x: x.startswith("CONT") or name in x, lines))
     print( "\n".join( lines ))
-
-#    print( stdout.decode("utf-8") )
-
 
 
 def get_container_id(name:str) -> str:
     cmd = "docker ps | egrep {}".format( name)
     stdout, stderr = launch_cmd( cmd )
-    lines = stdout.decode("utf-8").split("\n")
+    lines = stdout.split("\n")
     lines = list(filter(None, lines))
 
     if lines == []:
@@ -177,14 +162,23 @@ def readin_json_file(filename:str) -> {}:
 
     return data
 
+def get_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        # doesn't even have to be reachable
+        s.connect(('10.255.255.255', 1))
+        IP = s.getsockname()[0]
+    except:
+        IP = '127.0.0.1'
+    finally:
+        s.close()
+    return IP
 
 def main():
 
-    commands = ['start', 'stop','logs', 'list', 'bootstrap', 'help']
-
+    commands = ['start', 'stop','logs', 'list', 'bootstrap', 'export', 'import', 'help']
 
     parser = argparse.ArgumentParser(description='bysykkel_import: importing data')
-
 
     parser.add_argument('-c', '--config', default="galaxy.json", help="config file, can be overridden by parameters")
     parser.add_argument('command', nargs='+', help="{}".format(",".join(commands)))
@@ -194,11 +188,14 @@ def main():
     config = readin_json_file( args.config )
 
 
+
     min_count(1, len(args.command), msg="galaxy_cli takes one of the following commands: {}".format(comma_sep( commands )))
 
     command = args.command.pop(0)
     if command not in commands:
-        parser.print_help()
+        print("Unknown command {}".format(command))
+        command = "help"
+
 
     if command == 'start':
         container_start(config)
@@ -209,6 +206,14 @@ def main():
     elif command == 'bootstrap':
         container_bootstrap()
         sys.exit()
+    elif command == 'export':
+        print("Saving image {name} to {name}.tgz".format(name=CONTAINER_NAME))
+        cmd = "docker image save {name} | gzip -c > {name}.tgz".format(name=CONTAINER_NAME)
+        launch_cmd(cmd)
+        sys.exit()
+    elif command == 'import':
+        cmd = "docker load < {name}.tar.gz".format(name=CONTAINER_NAME)
+        launch_cmd(cmd)
     elif command == 'help':
         print("The tool support the following commands: {}".format(comma_sep( commands )))
         sys.exit( 1 )
