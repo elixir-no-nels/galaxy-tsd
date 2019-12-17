@@ -137,7 +137,7 @@ def get_container_id(name:str) -> str:
 
 def container_bootstrap():
     fh = open('galaxy.json', 'w')
-    fh.write( '{ "storage":"galaxy_data", "port":8080 }')
+    fh.write( '{ "storage":"galaxy_data", "port":8080, "cvmsf": None, "data": None }')
     fh.close()
     os.mkdir('galaxy_data')
 
