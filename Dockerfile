@@ -12,6 +12,10 @@ ENV GALAXY_CONFIG_BRAND NeLS
 #ENV http_proxy 'http://yourproxyIP:8080'
 #ENV https_proxy 'http://yourproxyIP:8080'
 
+ENV GALAXY_DEFAULT_ADMIN_USER galaxy
+ENV GALAXY_DEFAULT_ADMIN_PASSWORD galaxy
+
+
 WORKDIR /galaxy-central
 
 RUN add-tool-shed --url 'http://testtoolshed.g2.bx.psu.edu/' --name 'Test Tool Shed'
@@ -28,8 +32,8 @@ ADD ./nels-workflows/* $GALAXY_HOME/workflows/
 ENV GALAXY_CONFIG_TOOL_PATH=/galaxy-central/tools/
 
 
-#RUN /tool_deps/_conda/bin/workflow-install --workflow_path $GALAXY_HOME/workflows/ -g http://localhost:8080 \
-#        -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+RUN /tool_deps/_conda/bin/workflow-install --workflow_path $GALAXY_HOME/workflows/ -g http://localhost:8080 \
+        -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
 
 # Download training data and populate the data library
 RUN startup_lite && \
@@ -54,7 +58,7 @@ ADD assets $GALAXY_CONFIG_DIR/web/
 
 # Expose port 80 (webserver), 21 (FTP server), 8800 (Proxy)
 EXPOSE :80
-EXPOSE :21
+#EXPOSE :21
 #EXPOSE :8800
 
 # Autostart script that is invoked during container start
