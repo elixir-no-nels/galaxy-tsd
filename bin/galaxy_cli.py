@@ -9,13 +9,12 @@ import json
 import subprocess
 import socket
 
-CONTAINER_NAME = "test"
+CONTAINER_NAME = "galaxy-tsd"
 
 
 def launch_cmd(cmd:str, cwd:str=None) -> None:
     effective_command = cmd
-    p = subprocess.Popen(effective_command, stdout=subprocess.PIPE, shell=True, stderr=subprocess.PIPE, bufsize=1,
-                                                                       cwd=cwd)
+    p = subprocess.Popen(effective_command, stdout=subprocess.PIPE, shell=True, stderr=subprocess.PIPE, cwd=cwd)
     stdout, stderr = p.communicate()
     if stderr:
         print( stderr.decode('utf-8') )
