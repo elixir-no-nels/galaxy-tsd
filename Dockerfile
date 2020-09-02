@@ -20,9 +20,10 @@ WORKDIR /galaxy-central
 
 RUN add-tool-shed --url 'http://testtoolshed.g2.bx.psu.edu/' --name 'Test Tool Shed'
 
-ADD ./tools/rnaseq.yml $GALAXY_ROOT/rnaseq.yaml
+#ADD ./tools/rnaseq.yml $GALAXY_ROOT/rnaseq.yaml
+ADD ./tools/tools.yml $GALAXY_ROOT/tools.yaml
 
-RUN install-tools $GALAXY_ROOT/rnaseq.yaml && \
+RUN install-tools $GALAXY_ROOT/tools.yaml && \
     /tool_deps/_conda/bin/conda clean --tarballs --yes > /dev/null && \
     rm /export/galaxy-central/ -rf && \
     mkdir -p workflows
@@ -32,12 +33,13 @@ ADD ./nels-workflows/* $GALAXY_HOME/workflows/
 ENV GALAXY_CONFIG_TOOL_PATH=/galaxy-central/tools/
 
 
-RUN /tool_deps/_conda/bin/workflow-install --workflow_path $GALAXY_HOME/workflows/ -g http://localhost:8080 \
-        -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+#RUN /tool_deps/_conda/bin/workflow-install --workflow_path $GALAXY_HOME/workflows/ -g http://localhost:8080 \
+#        -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
 
 # Download training data and populate the data library
-RUN startup_lite && \
-    /tool_deps/_conda/bin/workflow-install --workflow_path $GALAXY_HOME/workflows/ -g http://localhost:8080 -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
+
+#RUN startup_lite && \
+#    /tool_deps/_conda/bin/workflow-install --workflow_path $GALAXY_HOME/workflows/ -g http://localhost:8080 -u $GALAXY_DEFAULT_ADMIN_USER -p $GALAXY_DEFAULT_ADMIN_PASSWORD
 
 # Install Visualisation
 #RUN install-biojs msa
